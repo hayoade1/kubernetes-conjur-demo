@@ -16,12 +16,8 @@ main() {
     IMAGE_PULL_POLICY='Always'
   fi
 
-  # The Kubernetes app has a PG backend that also needs to be deployed
-  if [[ "$PLATFORM" = "kubernetes" ]]; then
-    deploy_app_backend
-    deploy_secretless_app
-  fi
-
+  deploy_app_backend
+  deploy_secretless_app
   deploy_sidecar_app
   deploy_init_container_app
   sleep 15  # allow time for containers to initialize
