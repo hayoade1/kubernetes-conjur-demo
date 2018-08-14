@@ -25,19 +25,19 @@ spec:
         imagePullPolicy: Always
         name: test-app
         env:
+          - name: CONJUR_VERSION
+            value: '{{ CONJUR_VERSION }}'
           - name: CONJUR_APPLIANCE_URL
             value: "{{ CONJUR_APPLIANCE_URL }}"
           - name: CONJUR_ACCOUNT
             value: {{ CONJUR_ACCOUNT }}
+          - name: CONJUR_AUTHN_TOKEN_FILE
+            value: /run/conjur/access-token
           - name: CONJUR_SSL_CERTIFICATE
             valueFrom:
               configMapKeyRef:
                 name: {{ CONFIG_MAP_NAME }}
                 key: ssl-certificate
-          - name: CONJUR_AUTHN_TOKEN_FILE
-            value: /run/conjur/access-token
-          - name: CONJUR_VERSION
-            value: "{{ CONJUR_VERSION }}"
         volumeMounts:
           - mountPath: /run/conjur
             name: conjur-access-token
