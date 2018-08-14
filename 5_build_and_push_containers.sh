@@ -14,51 +14,32 @@ readonly APPS=(
   "sidecar"
 )
 
-# Kubernetes and OpenShift currently run different apps in the demo
-if [[ "$PLATFORM" = "kubernetes" ]]; then
+pushd test_app_summon
+  for app_type in "${APPS[@]}"; do
+    # prep secrets.yml
+    sed -e "s#{{ TEST_APP_NAME }}#test-summon-$app_type-app#g" ./secrets.template.yml > secrets.yml
 
-  pushd test_app_summon
-    for app_type in "${APPS[@]}"; do
-      # prep secrets.yml
-      sed -e "s#{{ TEST_APP_NAME }}#test-summon-$app_type-app#g" ./secrets.template.yml > secrets.yml
+    docker build -t test-app:$CONJUR_NAMESPACE_NAME .
 
-      docker build -t test-app:$CONJUR_NAMESPACE_NAME .
-
-      test_app_image=$(platform_image "test-$app_type-app")
-      docker tag test-app:$CONJUR_NAMESPACE_NAME $test_app_image
-
-      if [[ is_minienv != true ]]; then
-        docker push $test_app_image
-      fi
-    done
-  popd
-
-  pushd pg
-    docker build -t test-app-pg:$CONJUR_NAMESPACE_NAME .
-
-    test_app_pg_image=$(platform_image test-app-pg)
-    docker tag test-app-pg:$CONJUR_NAMESPACE_NAME $test_app_pg_image
+    test_app_image=$(platform_image "test-$app_type-app")
+    docker tag test-app:$CONJUR_NAMESPACE_NAME $test_app_image
 
     if [[ is_minienv != true ]]; then
-      docker push $test_app_pg_image
+      docker push $test_app_image
     fi
-  popd
+  done
+popd
 
-else
+pushd pg
+  docker build -t test-app-pg:$CONJUR_NAMESPACE_NAME .
 
-  pushd webapp
-    ./build.sh
+  test_app_pg_image=$(platform_image test-app-pg)
+  docker tag test-app-pg:$CONJUR_NAMESPACE_NAME $test_app_pg_image
 
-    for app_type in "${APPS[@]}"; do
-      test_app_image=$(platform_image "test-$app_type-app")
-      docker tag test-app:$CONJUR_NAMESPACE_NAME $test_app_image
-      if [[ is_minienv != true ]]; then
-        docker push $test_app_image
-      fi
-    done
-  popd
-
-fi
+  if [[ is_minienv != true ]]; then
+    docker push $test_app_pg_image
+  fi
+popd
 
 if [[ $LOCAL_AUTHENTICATOR == true ]]; then
   # Re-tag the locally-built conjur-authn-k8s-client:dev image
