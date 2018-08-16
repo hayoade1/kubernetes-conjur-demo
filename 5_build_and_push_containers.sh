@@ -19,7 +19,14 @@ pushd test_app_summon
     # prep secrets.yml
     sed -e "s#{{ TEST_APP_NAME }}#test-summon-$app_type-app#g" ./secrets.template.yml > secrets.yml
 
-    docker build -t test-app:$CONJUR_NAMESPACE_NAME .
+    dockerfile="Dockerfile"
+    if [ $PLATFORM = 'openshift' ]; then
+      dockerfile="Dockerfile.oc"
+    fi
+
+    docker build \
+      -t test-app:$CONJUR_NAMESPACE_NAME \
+      -f $dockerfile .
 
     test_app_image=$(platform_image "test-$app_type-app")
     docker tag test-app:$CONJUR_NAMESPACE_NAME $test_app_image
