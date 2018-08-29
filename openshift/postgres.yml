@@ -11,7 +11,7 @@ spec:
       targetPort: 5432
 
 ---
-apiVersion: apps/v1
+apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: pg
@@ -30,6 +30,6 @@ spec:
       containers:
       - name: test-app-backend
         image: {{ TEST_APP_PG_DOCKER_IMAGE }}
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
           - containerPort: 5432
