@@ -15,6 +15,16 @@ readonly APPS=(
 )
 
 pushd test_app_summon
+  if [ $PLATFORM = 'openshift' ]; then
+    docker build -t test-app-builder -f Dockerfile.builder .
+
+    # retrieve the summon binaries
+    id=$(docker create test-app-builder)
+    docker cp $id:/usr/local/lib/summon/summon-conjur ./
+    docker cp $id:/usr/local/bin/summon ./
+    docker rm -v $id
+  fi
+
   for app_type in "${APPS[@]}"; do
     # prep secrets.yml
     sed -e "s#{{ TEST_APP_NAME }}#test-summon-$app_type-app#g" ./secrets.template.yml > secrets.yml
@@ -38,7 +48,16 @@ pushd test_app_summon
 popd
 
 pushd pg
-  docker build -t test-app-pg:$CONJUR_NAMESPACE_NAME .
+
+  if [ $PLATFORM = 'openshift' ]; then
+    s2i build . centos/postgresql-95-centos7 test-app-pg-builder
+    docker build \
+      -t test-app-pg:$CONJUR_NAMESPACE_NAME \
+      -f Dockerfile.oc \
+      .
+  else
+    docker build -t test-app-pg:$CONJUR_NAMESPACE_NAME .
+  fi
 
   test_app_pg_image=$(platform_image test-app-pg)
   docker tag test-app-pg:$CONJUR_NAMESPACE_NAME $test_app_pg_image

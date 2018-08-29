@@ -1,0 +1,5 @@
+FROM test-app-pg-builder
+
+ENV POSTGRESQL_ADMIN_PASSWORD postgres
+
+COPY rotate_password /usr/local/bin/

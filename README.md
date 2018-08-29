@@ -29,6 +29,9 @@ export PLATFORM=openshift
 
 Otherwise, this variable will default to `kubernetes`.
 
+To run this demo with OpenShift / minishift, you will also need to install
+OpenShift's [source-to-image](https://github.com/openshift/source-to-image) tool.
+
 ### Deploying Conjur
 
 Before running this demo you will need to [set up a Conjur cluster](https://github.com/cyberark/kubernetes-conjur-deploy)
