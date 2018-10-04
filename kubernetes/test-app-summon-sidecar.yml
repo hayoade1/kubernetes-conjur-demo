@@ -36,6 +36,7 @@ spec:
     spec:
       serviceAccountName: test-app-summon-sidecar
       containers:
+      # app
       - image: {{ TEST_APP_DOCKER_IMAGE }}
         imagePullPolicy: {{ IMAGE_PULL_POLICY }}
         name: test-app
@@ -59,6 +60,7 @@ spec:
           - mountPath: /run/conjur
             name: conjur-access-token
             readOnly: true
+      # authenticator
       - image: cyberark/conjur-kubernetes-authenticator
         imagePullPolicy: Always
         name: authenticator
