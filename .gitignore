@@ -1,5 +1,5 @@
 policy/generated/*
-pg/schema.sql
+pg/postgresql-init/schema.sql
 test_app_summon/secrets.yml
 test_app_summon/summon*
 output/

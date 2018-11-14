@@ -96,7 +96,8 @@ deploy_sidecar_app() {
   $cli delete --ignore-not-found \
     deployment/test-app-summon-sidecar \
     service/test-app-summon-sidecar \
-    serviceaccount/test-app-summon-sidecar
+    serviceaccount/test-app-summon-sidecar \
+    serviceaccount/oc-test-app-summon-sidecar
 
   if [ $PLATFORM = 'openshift' ]; then
     oc delete --ignore-not-found deploymentconfig/test-app-summon-sidecar
@@ -126,7 +127,8 @@ deploy_init_container_app() {
   $cli delete --ignore-not-found \
     deployment/test-app-summon-init \
     service/test-app-summon-init \
-    serviceaccount/test-app-summon-init
+    serviceaccount/test-app-summon-init \
+    serviceaccount/oc-test-app-summon-init
 
   if [ $PLATFORM = 'openshift' ]; then
     oc delete --ignore-not-found deploymentconfig/test-app-summon-init
@@ -157,7 +159,12 @@ deploy_secretless_app() {
     deployment/test-app-secretless \
     service/test-app-secretless \
     serviceaccount/test-app-secretless \
+    serviceaccount/oc-test-app-secretless \
     configmap/test-app-secretless-config
+
+  if [ $PLATFORM = 'openshift' ]; then
+    oc delete --ignore-not-found deploymentconfig/test-app-secretless
+  fi
 
   $cli create configmap test-app-secretless-config \
     --from-file=etc/secretless.yml

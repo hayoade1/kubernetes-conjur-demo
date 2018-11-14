@@ -76,7 +76,7 @@ done
 
 # Set DB password in DB schema
 pushd pg
-  sed -e "s#{{ TEST_APP_PG_PASSWORD }}#$password#g" ./schema.template.sql > ./schema.sql
+  sed -e "s#{{ TEST_APP_PG_PASSWORD }}#$password#g" ./schema.template.sql > ./postgresql-init/schema.sql
 popd
 
 announce "Added DB password value: $password"
